@@ -7,11 +7,11 @@ rage -
 
 gl drawing
 
-put assets.saph in C:\sapphire\ or change the path yourself.
-
 player esp -
  name
  2d box
  health bar
  active weapon
  visible/xqz chams ( custom shader )
+ 
+put assets.saph in C:\sapphire\ or change the path yourself.
