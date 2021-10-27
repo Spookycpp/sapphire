@@ -68,6 +68,9 @@ public:
 		for ( int i = 0; i < 6; i++ )
 		{
 			const auto weapon_info = *reinterpret_cast< rust::classes::c_base_weapon** >( items + 0x20 + ( i * 0x8 ) );
+			if ( !weapon_info )
+				return {};
+
 			const auto weapon_uid = *reinterpret_cast< unsigned int* >( weapon_info + 0x28 );
 			if ( !weapon_uid )
 				return {};
