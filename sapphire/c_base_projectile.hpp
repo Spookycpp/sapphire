@@ -6,7 +6,7 @@ class rust::classes::c_base_projectile
 public:
 	DECLARE_MEMBER( math::vector_t, "Projectile", currentVelocity )
 	DECLARE_MEMBER( bool, "BaseProjectile", automatic )
-	DECLARE_MEMBER( float, "BaseProjectile", thickness )
+	DECLARE_MEMBER( float, "Projectile", thickness ) // this was BaseProjectile... whoops...
 	DECLARE_MEMBER( float, "BaseProjectile", projectileVelocityScale )
 	DECLARE_MEMBER( float, "BaseProjectile", aimCone )
 	DECLARE_MEMBER( float, "BaseProjectile", hipAimCone )

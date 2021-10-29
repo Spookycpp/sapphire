@@ -10,7 +10,7 @@ auto sapphire::features::c_silent_aim::do_manipulation( ) -> void
 	// brocken.
 }
 
-auto sapphire::features::c_silent_aim::find_aimbot_target( ) -> bool 
+auto sapphire::features::c_silent_aim::find_aimbot_target( ) -> bool
 {
 	if ( !sapphire::globals::local )
 		return false;
@@ -26,7 +26,7 @@ auto sapphire::features::c_silent_aim::find_aimbot_target( ) -> bool
 
 	const auto buffer = entity_list->buffer< std::uintptr_t >( );
 
-	for ( size_t idx{ 0 }; idx <= entity_list->size( ); idx++ ) 
+	for ( size_t idx{ 0 }; idx <= entity_list->size( ); idx++ )
 	{
 		const auto current_object = *reinterpret_cast< std::uintptr_t* >( buffer + 0x20 + ( idx * 0x8 ) );
 		if ( !current_object )
@@ -54,17 +54,19 @@ auto sapphire::features::c_silent_aim::find_aimbot_target( ) -> bool
 		if ( !player->alive( ) )
 			continue;
 
-		auto pos = player->get_bone_transform( 48 )->position( );
+		if ( player->sleeping( ) )
+			continue;
 
+		const auto pos = player->get_bone_transform( 48 )->position( );
 		const auto source = sapphire::globals::local->eyes( )->position( );
-
+		
 		const auto visible = player->visible( source, pos );
 		if ( !visible )
 			continue;
 
 		const auto fov = unity::calculate_fov( pos );
 
-		if ( fov >= 500 )
+		if ( fov >= 100 )
 			continue;
 
 		m_aim_target = player;
@@ -79,6 +81,12 @@ auto sapphire::features::c_silent_aim::on_projectile_shoot_rpc( std::uint64_t in
 	if ( !sapphire::globals::local )
 		return;
 
+	if ( !m_aim_target )
+		return;
+
+	if ( !m_aim_target->alive( ) )
+		return;
+
 	const auto weapon = sapphire::globals::local->weapon( );
 	if ( !weapon )
 		return;
@@ -88,9 +96,6 @@ auto sapphire::features::c_silent_aim::on_projectile_shoot_rpc( std::uint64_t in
 		return;
 
 	const auto projectile_list = *reinterpret_cast< rust::classes::c_base_projectile** >( *reinterpret_cast< std::uintptr_t* >( base_projectile + 0x358 ) + 0x10 );
-
-	if ( !find_aimbot_target( ) )
-		return;
 
 	// maybe use system::list 
 	const auto shoot_list = *reinterpret_cast< std::uintptr_t* >( *reinterpret_cast< std::uintptr_t* >( instance + 0x18 ) + 0x10 );
@@ -119,6 +124,8 @@ auto sapphire::features::c_silent_aim::on_projectile_shoot_rpc( std::uint64_t in
 			continue;
 
 		if ( m_aim_target )
-			projectile->currentVelocity( ) = this->m_aim_angle;
+			projectile->currentVelocity( ) = m_aim_angle;
+
+		projectile->thickness( ) = 0.85f;
 	}
 }

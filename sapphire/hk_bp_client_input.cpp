@@ -23,6 +23,9 @@ auto impl::hooks::hk_bp_client_input( rust::classes::c_base_player* base_player,
 		if ( !sapphire::globals::local )
 			sapphire::globals::local = base_player;
 
+		sapphire::features::aimbot::object.find_aimbot_target( );
+
+		base_player->playerFlags( ) |= rust::enums::e_player_flags::is_admin; // beware i dont remove flying from your modelstate flags so if you noclip you will get a cheat detected! ban msg.
 		if (const auto movement = base_player->movement( ) )
 		{
 			base_player->modelState( )->set_flag( rust::enums::e_model_state_flag::on_ground );
