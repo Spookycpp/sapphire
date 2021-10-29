@@ -14,6 +14,14 @@ auto impl::hooks::hk_bp_client_input( rust::classes::c_base_player* base_player,
 			il2cpp_codegen_initialize_method( idx );
 		}
 
+		static auto projectile_shoot_sig = utl::pattern::find( L"GameAssembly.dll", "4C 8B 0D ? ? ? ? 48 8B 75 28" );
+		const auto relative_projectile_shoot = *reinterpret_cast< std::uintptr_t* >( projectile_shoot_sig + *reinterpret_cast< std::int32_t* >( projectile_shoot_sig + 3 ) + 7 );
+
+		if ( relative_projectile_shoot ) {
+			const auto projectile_shoot_rpc = **reinterpret_cast< std::uintptr_t*** >( relative_projectile_shoot + 0x30 );
+			HOOK_CUSTOM( projectile_shoot_rpc, impl::hooks::o_projectile_shoot_rpc, &impl::hooks::hk_projectile_shoot_rpc );
+		}
+
 		has_initialized = true;
 	}
 

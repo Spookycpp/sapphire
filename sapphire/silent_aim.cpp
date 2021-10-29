@@ -58,11 +58,11 @@ auto sapphire::features::c_silent_aim::find_aimbot_target( ) -> bool
 			continue;
 
 		const auto pos = player->get_bone_transform( 48 )->position( );
-		const auto source = sapphire::globals::local->eyes( )->position( );
+		//const auto source = sapphire::globals::local->eyes( )->position( );
 		
-		const auto visible = player->visible( source, pos );
-		if ( !visible )
-			continue;
+		//const auto visible = player->visible( source, pos );
+		//if ( !visible )
+		//	continue;
 
 		const auto fov = unity::calculate_fov( pos );
 
