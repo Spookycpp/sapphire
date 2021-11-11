@@ -15,3 +15,5 @@ player esp -
  visible/xqz chams ( custom shader )
  
 put assets.saph in C:\sapphire\ or change the path yourself.
+
+notice: for the upcoming chaiscript update the api can be found at [clwie/sapphire_api](https://github.com/clwie/sapphire_api)
