@@ -1,12 +1,19 @@
 #pragma once
 #include "include.hpp"
 
+// todo; put in own file
+
+class c_magazine {
+public:
+	auto ammo_type( ) -> rust::classes::c_item_definition* {
+		return *reinterpret_cast< rust::classes::c_item_definition** >( this + 0x20 );
+	}
+};
+
 class rust::classes::c_base_projectile 
 {
 public:
-	DECLARE_MEMBER( math::vector_t, "Projectile", currentVelocity )
 	DECLARE_MEMBER( bool, "BaseProjectile", automatic )
-	DECLARE_MEMBER( float, "Projectile", thickness ) // this was BaseProjectile... whoops...
 	DECLARE_MEMBER( float, "BaseProjectile", projectileVelocityScale )
 	DECLARE_MEMBER( float, "BaseProjectile", aimCone )
 	DECLARE_MEMBER( float, "BaseProjectile", hipAimCone )
@@ -15,6 +22,7 @@ public:
 	DECLARE_MEMBER( float, "BaseProjectile", stancePenaltyScale )
 	DECLARE_MEMBER( float, "BaseProjectile", aimSway )
 	DECLARE_MEMBER( float, "BaseProjectile", aimSwaySpeed )
+	DECLARE_MEMBER( c_magazine*, "BaseProjectile", primaryMagazine );
 
 	auto list_size( ) -> std::uint32_t { return *reinterpret_cast< std::uint32_t* >( this + 0x18 ); }
 

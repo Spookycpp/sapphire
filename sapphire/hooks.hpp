@@ -11,9 +11,10 @@ namespace impl
 {
 	namespace hooks
 	{
-		SAPPHIRE_HOOK( void, bp_client_input, ( rust::classes::c_base_player* base_player, void* input_state ) )
+		SAPPHIRE_HOOK( void, bp_client_input, ( rust::classes::c_base_player* base_player, std::uintptr_t* input_state ) )
 		SAPPHIRE_HOOK( void, on_attacked, ( void* instance, rust::classes::c_hit_info* hit_info ) )
 		SAPPHIRE_HOOK( void, launch_projectile, ( void* instance ) )
+		SAPPHIRE_HOOK( void, bce_client_init, ( rust::classes::c_base_player* instance, void* entity ) )
 		SAPPHIRE_SWAP( void, ddraw_ongui, ( std::uintptr_t rcx ) )
 
 		inline std::uintptr_t o_projectile_shoot_rpc;

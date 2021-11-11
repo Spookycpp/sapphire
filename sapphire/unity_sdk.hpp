@@ -6,6 +6,45 @@ namespace unity
 {
 	inline std::uintptr_t asset_bundle, camera;
 
+	class c_component {
+	public:
+		template < typename type >
+		auto get_component( std::uintptr_t type_name ) -> type {
+			SAPPHIRE_METHOD( get_component_fn, "UnityEngine::Component.GetComponent()", -1, "", -1, type( * )( void*, std::uintptr_t ) );
+			return get_component_fn( this, type_name );
+		}
+	};
+
+	class c_game_object : public c_component {
+	public:
+		template < typename type >
+		auto get_component( std::uintptr_t type_name ) -> type {
+			SAPPHIRE_METHOD( game_object_get_component_fn, "UnityEngine::GameObject.GetComponent()", 1, "", -1, std::uintptr_t( * )( void*, std::uintptr_t ) );
+			return *reinterpret_cast< type* >( game_object_get_component_fn( this, type_name ) );
+		}
+	};
+
+	class c_screen {
+	public:
+		static auto get_width( ) -> int {
+			SAPPHIRE_METHOD( get_screen_width_fn, "UnityEngine::Screen.get_width()", 0, "", -1, int ( * )( ) );
+			return get_screen_width_fn( );
+		}
+
+		static auto get_height( ) -> int {
+			SAPPHIRE_METHOD( get_screen_height_fn, "UnityEngine::Screen.get_height()", 0, "", -1, int ( * )( ) );
+			return get_screen_height_fn( );
+		}
+	};
+
+	class c_time {
+	public:
+		static auto get_time( ) -> float {
+			SAPPHIRE_METHOD( get_time_fn, "UnityEngine::Time.get_time()", 0, "", -1, float( * )( ) );
+			return get_time_fn( );
+		}
+	};
+
 	enum class key_code // todo; clean this mess up. maybe put both of these in enums.hpp
 	{
 		Backspace = 8, Delete = 127, Tab = 9, Clear = 12,
@@ -137,9 +176,6 @@ namespace unity
 	{
 		auto matrix = view_matrix( );
 
-		SAPPHIRE_METHOD( get_screen_width_fn, "UnityEngine::Screen.get_width()", 0, "", -1, int ( * )( ) );
-		SAPPHIRE_METHOD( get_screen_height_fn, "UnityEngine::Screen.get_height()", 0, "", -1, int ( * )( ) );
-
 		if ( !matrix.m ) {
 			return { 0,0,0 };
 		}
@@ -160,8 +196,8 @@ namespace unity
 		float x = right.dot( wrld ) + temp[ 0 ][ 3 ];
 		float y = up.dot( wrld ) + temp[ 1 ][ 3 ];
 
-		out.x = ( static_cast< float >( get_screen_width_fn( ) ) / 2 )* ( 1 + x / w );
-		out.y = ( static_cast< float >( get_screen_height_fn( ) ) / 2 )* ( 1 - y / w );
+		out.x = ( static_cast< float >( unity::c_screen::get_width( ) ) / 2 )* ( 1 + x / w );
+		out.y = ( static_cast< float >( unity::c_screen::get_height( ) ) / 2 )* ( 1 - y / w );
 		out.z = 0.0f;
 
 		return out;
@@ -173,14 +209,11 @@ namespace unity
 		if ( screen_pos.is_empty( ) )
 			return 10000;
 
-		SAPPHIRE_METHOD( get_screen_width_fn, "UnityEngine::Screen.get_width()", 0, "", -1, int ( * )( ) );
-		SAPPHIRE_METHOD( get_screen_height_fn, "UnityEngine::Screen.get_height()", 0, "", -1, int ( * )( ) );
-
 		auto get_2d_dist = [ & ]( const math::vector_2d_t& source, const math::vector_t& dest ) {
-			return math::vector_t::sqrtf( powf( source.x - dest.x ) + powf( source.y - dest.y ) );
+			return math::vector_t::sqrtf( _powf( source.x - dest.x ) + _powf( source.y - dest.y ) );
 		};
 
-		return get_2d_dist( math::vector_2d_t( get_screen_width_fn( ) / 2, get_screen_height_fn( ) / 2 ), screen_pos );
+		return get_2d_dist( math::vector_2d_t( unity::c_screen::get_width( ) / 2, unity::c_screen::get_height( ) / 2 ), screen_pos );
 	}
 
 

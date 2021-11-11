@@ -1,8 +1,8 @@
 #include <string>
-
 #include "hooks.hpp"
+#include "chai_wrapper.hpp"
 
-auto impl::hooks::hk_ddraw_ongui( std::uintptr_t rcx ) -> void 
+auto impl::hooks::hk_ddraw_ongui( std::uintptr_t rcx ) -> void
 {
 	sapphire::rendering::init( );
 
@@ -16,22 +16,27 @@ auto impl::hooks::hk_ddraw_ongui( std::uintptr_t rcx ) -> void
 	{
 		sapphire::features::visuals::object.run( );
 
-		SAPPHIRE_METHOD( get_screen_width_fn, "UnityEngine::Screen.get_width()", 0, "", -1, int ( * )( ) );
-		SAPPHIRE_METHOD( get_screen_height_fn, "UnityEngine::Screen.get_height()", 0, "", -1, int ( * )( ) );
-
 		if ( sapphire::globals::local )
 		{
 			const auto watermark_text = L"sapphire | ti: " + std::to_wstring( sapphire::globals::local->clientTickInterval( ) ) + L" | " + sapphire::globals::local->name( );
 
-			sapphire::rendering::draw_string( { 8, get_screen_height_fn( ) - 40.f, 300, 50 }, watermark_text.c_str( ), { 255, 255, 255, 255 }, true, false, false );
-			sapphire::rendering::draw_string( { get_screen_width_fn( ) / 2.f - 2.f, get_screen_height_fn( ) / 2.f - 12.f, 20, 20 }, L"$", { 211, 3, 252, 255 }, false, true, false );
+			sapphire::rendering::draw_string( { 8, unity::c_screen::get_height( ) - 40.f, 300, 50 }, watermark_text.c_str( ), { 255, 255, 255, 255 }, true, false, false );
+			sapphire::rendering::draw_string( { unity::c_screen::get_width( ) / 2.f - 10, unity::c_screen::get_height( ) / 2.f - 12.f, 20, 20 }, L"$", { 211, 3, 252, 255 }, false, true, true );
 
 			if ( sapphire::globals::local->clientTickInterval( ) > 0.045f )
-				sapphire::rendering::draw_string( { get_screen_width_fn( ) / 2.f - 2.f, get_screen_height_fn( ) / 2.f + 5, 300, 20 }, L"desyncing", { 120, 5, 5, 255 }, false, true, false );
+				sapphire::rendering::draw_string( { unity::c_screen::get_width( ) / 2.f - 150, unity::c_screen::get_height( ) / 2.f + 5, 300, 20 }, L"desyncing", { 120, 5, 5, 255 }, false, true, true );
+
+			if ( !sapphire::features::aimbot::object.m_view_offset.is_empty( ) )
+				sapphire::rendering::draw_string( { unity::c_screen::get_width( ) / 2.f - 150, unity::c_screen::get_height( ) / 2.f + 17, 300, 20 }, L"manipulated", { 120, 5, 5, 255 }, false, true, true );
 
 			sapphire::features::hitmarkers::object.run( );
 		}
 
 		sapphire::features::notifcations::object.run( );
+
+		for ( auto instance : chai_instance_manager::instances ) {
+			if ( instance.script_on_gui )
+				instance.chai_on_gui_callback( );
+		}
 	}
 }

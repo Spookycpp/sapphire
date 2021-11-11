@@ -6,10 +6,17 @@ namespace impl
 	// note - chloe; we cannot call the original of these functions however most of them OnEnable/Start/Update/OnGUI are empty so we do not need to add saving of original.
 	class swap_ptr_c
 	{
+	private:
+		std::uintptr_t m_original{ 0 };
 	public:
 		auto setup( std::string name, void* our_function, int arg_count = -1 ) -> void {
 			auto il2cpp_method = il2cpp_lib::method( name, arg_count, "" );
+			m_original = *reinterpret_cast< std::uintptr_t* >( il2cpp_method );
 			*reinterpret_cast< void** >( il2cpp_method ) = our_function;
+		}
+
+		auto restore( void* our_function ) -> void {
+			*reinterpret_cast< void** >( our_function ) = &m_original;
 		}
 	};
 
@@ -19,7 +26,7 @@ namespace impl
 	private:
 		std::uintptr_t m_original{ 0 };
 	public:
-		void setup( std::string name, void* our_function )
+		auto setup( std::string name, void* our_function ) -> void
 		{
 			const auto st = il2cpp_lib::sanitize_method_name( name );
 
@@ -29,7 +36,7 @@ namespace impl
 			if ( search_method == std::uintptr_t( our_function ) )
 				return;
 
-			for ( auto idx = class_base; idx <= class_base + 0x1500; idx += 0x1 ) {
+			for ( auto idx{ class_base }; idx <= class_base + 0x1500; idx += 0x1 ) {
 				const auto addr = *reinterpret_cast< std::uintptr_t* >( idx );
 				if ( addr == search_method ) {
 					m_original = search_method;
@@ -39,6 +46,10 @@ namespace impl
 		}
 
 		template< typename type >
-		type get_original( ) { return reinterpret_cast< type >( m_original ); }
+		auto get_original( ) -> type { return reinterpret_cast< type >( m_original ); }
+
+		auto restore( void* our_function ) -> void {
+			*reinterpret_cast< void** >( our_function ) = &m_original;
+		}
 	};
 }

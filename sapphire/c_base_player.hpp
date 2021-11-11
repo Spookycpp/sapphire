@@ -1,7 +1,7 @@
 #pragma once
 #include "include.hpp"
 
-class rust::classes::c_base_player 
+class rust::classes::c_base_player
 {
 public:
 	DECLARE_MEMBER( float, "BaseCombatEntity", _health )
@@ -18,6 +18,11 @@ public:
 		SAPPHIRE_FIELD( "BasePlayer", _displayName );
 		auto player_name = reinterpret_cast< managed_system::string* >( *reinterpret_cast< std::uintptr_t* >( this + _displayName ) );
 		return player_name->buffer;
+	}
+
+	auto npc( ) -> bool {
+		SAPPHIRE_METHOD( get_is_npc_fn, "PlayerModel.get_IsNpc()", -1, "", -1, bool( * )( std::uintptr_t ) );
+		return get_is_npc_fn( this->playerModel( ) );
 	}
 
 	auto networkable( ) -> rust::classes::c_networkable* 

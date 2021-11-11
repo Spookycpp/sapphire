@@ -10,7 +10,10 @@ namespace rust {
 		class c_model_state;
 		class c_player_eyes;
 		class c_transform;
+		class c_item_definition;
 		class c_base_projectile;
+		class c_item_mod_projectile;
+		class c_projectile;
 		class c_base_weapon;
 		class c_base_player;
 	}

@@ -12,9 +12,12 @@
 #include "rust.hpp"
 
 #include "c_base_projectile.hpp"
+#include "c_item_mod_projectile.hpp"
+#include "c_projectile.hpp"
 #include "c_base_weapon.hpp"
 #include "c_base_player.hpp"
 #include "c_hit_info.hpp"
+#include "c_item_definition.hpp"
 #include "c_model_state.hpp"
 #include "c_networkable.hpp"
 #include "c_player_eyes.hpp"

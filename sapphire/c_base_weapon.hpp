@@ -5,6 +5,7 @@ class rust::classes::c_base_weapon
 {
 public:
 	DECLARE_MEMBER( rust::classes::c_base_projectile*, "Item", heldEntity );
+	DECLARE_MEMBER( rust::classes::c_item_definition*, "Item", info );
 
 	auto is_weapon( ) -> bool 
 	{
@@ -12,6 +13,7 @@ public:
 		const auto item_definition = *reinterpret_cast< std::uintptr_t* >( this + info );
 		if ( !item_definition )
 			return false;
+
 
 		SAPPHIRE_FIELD( "ItemDefinition", category );
 		return *reinterpret_cast< std::uint32_t* >( item_definition + category ) == 0;

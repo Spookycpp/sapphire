@@ -36,7 +36,7 @@ namespace sapphire
 				set_font_size_fn( label_style, size );
 			};
 
-			set_font( L"tahoma.ttf", 10 );
+			set_font( L"arial.ttf", 8 );
 
 			if ( !sapphire::gl_rendering::draw_material )
 			{
@@ -87,7 +87,7 @@ namespace sapphire
 
 			if ( outline ) 
 			{
-				set_color_fn( { 0, 0, 0, ( clr.a * 240 ) } );
+				set_color_fn( { 0, 0, 0, ( clr.a * 255 ) } );
 				label_fn( { pos.x, pos.y + 1, pos.w, pos.h }, content, label_style );
 				label_fn( { pos.x, pos.y - 1, pos.w, pos.h }, content, label_style );
 				label_fn( { pos.x - 1, pos.y, pos.w, pos.h }, content, label_style );
@@ -96,7 +96,7 @@ namespace sapphire
 
 			if ( drop_shadow ) 
 			{
-				set_color_fn( { 0, 0, 0, ( clr.a * 240 ) } );
+				set_color_fn( { 0, 0, 0, ( clr.a * 255 ) } );
 				label_fn( { pos.x + 1, pos.y + 1, pos.w, pos.h }, content, label_style );
 			}
 

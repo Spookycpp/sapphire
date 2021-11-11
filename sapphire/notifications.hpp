@@ -35,12 +35,10 @@ namespace sapphire
 				float x{ 8 }, y{ 5 }, size{ 11 };
 				clr_t color( 0, 0, 0, 0 );
 
-				SAPPHIRE_METHOD( get_time_fn, "UnityEngine::Time.get_time()", 0, "", -1, float( * )( ) );
-
 				for ( size_t i{ }; i < m_notify_text.size( ) && !m_notify_text.empty( ); i++ ) {
 					auto& notify = m_notify_text[ i ];
 
-					float delta = get_time_fn( ) - notify->m_time;
+					float delta = unity::c_time::get_time( ) - notify->m_time;
 					if ( delta > 1.0f || std::abs( delta ) > 5.f )
 						m_notify_text.erase( m_notify_text.begin( ) + i );
 				}
@@ -51,7 +49,7 @@ namespace sapphire
 				for ( size_t i{}; i < m_notify_text.size( ); ++i ) {
 					auto notify = m_notify_text[ i ];
 
-					float delta = get_time_fn( ) - notify->m_time;
+					float delta = unity::c_time::get_time( ) - notify->m_time;
 
 					color = notify->m_color;
 

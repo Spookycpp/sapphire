@@ -120,10 +120,10 @@ namespace math
 
 		auto dot( const vector_t& vector ) -> float { return x * vector.x + y * vector.y + z * vector.z; }
 
-#undef powf
-#define powf(n) (n)*(n)
+//#undef powf
+#define _powf(n) (n)*(n)
 
-		auto distance3d( const vector_t& vector ) -> float { return sqrtf( powf( x - vector.x ) + powf( y - vector.y ) + powf( z - vector.z ) ); }
+		auto distance3d( const vector_t& vector ) -> float { return sqrtf( _powf( x - vector.x ) + _powf( y - vector.y ) + _powf( z - vector.z ) ); }
 		auto distance( const vector_t& vector ) -> float { return sqrtf( ( x - vector.x ) * ( x - vector.x ) + ( y - vector.y ) * ( y - vector.y ) + ( z - vector.z ) * ( z - vector.z ) ); }
 
 		vector_t normalized( ) {
