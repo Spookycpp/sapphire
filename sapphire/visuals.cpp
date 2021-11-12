@@ -40,6 +40,9 @@ auto sapphire::features::c_visuals::run( ) -> void
 			continue;
 
 		const auto player = reinterpret_cast< rust::classes::c_base_player* >( ent );
+		if ( player->sleeping( ) )
+			continue;
+
 
 		chams( player );
 		render_player( player );
@@ -51,22 +54,45 @@ auto sapphire::features::c_visuals::run( ) -> void
 
 auto sapphire::features::c_visuals::draw_tracers( ) -> void 
 {
+	if ( m_shots.empty( ) )
+		return;
 
+	SAPPHIRE_METHOD( ddraw_line_fn, "UnityEngine::DDraw.Line()", 6, "", -1, void( * )( math::vector_t, math::vector_t, clr_t, float, bool, bool ) );
+
+	for ( size_t idx{ }; idx < m_shots.size( ) && !m_shots.empty( ); idx++ )
+	{
+		auto& tr = m_shots[ idx ];
+
+		float delta = unity::c_time::get_time( ) - tr.m_time;
+		if ( delta > 1.0f || std::abs( delta ) > 5.f )
+			m_shots.erase( m_shots.begin( ) + idx );
+	}
+
+	if ( !m_shots.empty( ) )
+	{
+		for ( auto& shot : m_shots )
+		{
+			auto delta = unity::c_time::get_time( ) - shot.m_time;
+			auto col = clr_t::from_hsb( delta, 1.0f, 1.0f );
+			col.a = 1;
+
+			ddraw_line_fn( shot.m_start, shot.m_end, col, 0.5f, false, true );
+		}
+	}
 }
 
 auto sapphire::features::c_visuals::render_player( rust::classes::c_base_player* player ) -> void
 {
 	// hacky way to get our root transform for box
-	SAPPHIRE_METHOD( get_transform_fn, "UnityEngine::Component.get_transform()", 0, "", -1, rust::classes::c_transform * ( * )( rust::classes::c_base_player* ) );
-	SAPPHIRE_METHOD( get_screen_width_fn, "UnityEngine::Screen.get_width()", 0, "", -1, int ( * )( ) );
-	SAPPHIRE_METHOD( get_screen_height_fn, "UnityEngine::Screen.get_height()", 0, "", -1, int ( * )( ) );
-
 	auto clr = clr_t{ 153, 148, 171, 240 };
 
 	if ( player == sapphire::features::aimbot::object.m_aim_target )
 	{
 		clr = { 253, 117, 135, 255 };
 	}
+
+	SAPPHIRE_METHOD( get_transform_fn, "UnityEngine::Component.get_transform()", 0, "", -1, rust::classes::c_transform * ( * )( void* ) );
+
 
 	auto base_pos = unity::screen_transform( get_transform_fn( player )->position( ) );
 	auto head_pos = unity::screen_transform( player->get_bone_transform( 48 )->position( ) );
@@ -80,9 +106,9 @@ auto sapphire::features::c_visuals::render_player( rust::classes::c_base_player*
 
 	const auto box = box_t{ { base_pos.x - box_width * 0.5f, base_pos.y - box_height  }, { box_width, box_height } };
 
-	sapphire::gl_rendering::box( { box.pos.x - 1, box.pos.y - 1 }, { box.size.x + 2, box.size.y + 2 }, { 0, 0, 0, 240 } );
+	sapphire::gl_rendering::box( { box.pos.x - 1, box.pos.y - 1 }, { box.size.x + 2, box.size.y + 2 }, { 0, 0, 0, 255 } );
 	sapphire::gl_rendering::box( { box.pos.x, box.pos.y }, { box.size.x, box.size.y }, clr );
-	sapphire::gl_rendering::box( { box.pos.x + 1, box.pos.y + 1 }, { box.size.x - 2, box.size.y - 2 }, { 0, 0, 0, 240 } );
+	sapphire::gl_rendering::box( { box.pos.x + 1, box.pos.y + 1 }, { box.size.x - 2, box.size.y - 2 }, { 0, 0, 0, 255 } );
 
 	const auto half = ( box.size.x ) / 2;
 
@@ -97,7 +123,8 @@ auto sapphire::features::c_visuals::render_player( rust::classes::c_base_player*
 			sapphire::rendering::draw_string( { box.pos.x - 100.f, box.pos.y + box.size.y - 1.f, ( half * 2 ) + 200.f, 20 }, weapon_name, { 255, 255, 255, 255 }, true, false, true );
 	}
 
-	const auto health = box_t{ { box.pos.x - 5, box.pos.y + ( box.size.y - box.size.y * ( player->_health( ) ) / 100 ) }, { 2, box.size.y * ( player->_health( ) ) / 100 } };
+	const auto npc = player->npc( );
+	const auto health = box_t{ { box.pos.x - 5, box.pos.y + ( box.size.y - box.size.y * ( player->_health( ) ) / npc ? player->_maxHealth( ) : 100 ) }, { 2, box.size.y * ( player->_health( ) ) / npc ? player->_maxHealth( ) : 100 } };
 	const auto health_bg = box_t{ { box.pos.x - 5, box.pos.y }, { 2, box.size.y } };
 
 	sapphire::rendering::draw_filled_rect( { health_bg.pos.x, health_bg.pos.y - 1,  health_bg.size.x + 1, health_bg.size.y + 2 }, clr_t( 0, 0, 0, 240 ) );

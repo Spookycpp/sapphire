@@ -7,7 +7,7 @@
 
 namespace sapphire
 {
-	namespace features // fade-out is currently broken. will fix later.
+	namespace features
 	{
 		class c_notify_text
 		{
@@ -33,39 +33,50 @@ namespace sapphire
 
 			auto run( ) -> void {
 				float x{ 8 }, y{ 5 }, size{ 11 };
-				clr_t color( 0, 0, 0, 0 );
 
-				for ( size_t i{ }; i < m_notify_text.size( ) && !m_notify_text.empty( ); i++ ) {
-					auto& notify = m_notify_text[ i ];
+				for ( size_t idx{ }; idx < m_notify_text.size( ) && !m_notify_text.empty( ); idx++ )
+				{
+					auto& notify = m_notify_text[ idx ];
 
-					float delta = unity::c_time::get_time( ) - notify->m_time;
-					if ( delta > 1.0f || std::abs( delta ) > 5.f )
-						m_notify_text.erase( m_notify_text.begin( ) + i );
+					if ( fabs( unity::c_time::get_time( ) - notify->m_time ) > 5.f )
+					{
+						m_notify_text.erase( m_notify_text.begin( ) + idx );
+
+						if ( !m_notify_text.size( ) )
+							return;
+					}
 				}
 
 				if ( m_notify_text.empty( ) )
 					return;
 
 				for ( size_t i{}; i < m_notify_text.size( ); ++i ) {
-					auto notify = m_notify_text[ i ];
+					auto& notify = m_notify_text[ i ];
 
-					float delta = unity::c_time::get_time( ) - notify->m_time;
+					float time_delta = fabs( unity::c_time::get_time( ) - notify->m_time );
 
-					color = notify->m_color;
+					clr_t color = notify->m_color;
 
-					if ( delta > 0.5f || std::abs( delta ) > 2.5f ) {
+					float alpha = 255.f;
+					float height = 5 + ( 16 * i );
 
-						float complete = delta / 2.f;
-						float alpha = ( 1.f - delta ) * 240;
+					if ( time_delta > 5.f - 0.2f )
+						alpha = ( 255 - ( ( ( time_delta - ( 5.f - 0.2f ) ) / 0.2f ) * 255.f ) );
 
-						color.a = alpha;
+					if ( time_delta < 0.3f )
+						alpha = ( ( time_delta / 0.3f ) * 255.f );
 
-						if ( i == 0 && complete < 0.5 )
-							y += size * ( 1.f - complete / 0.2f );
-					}
+					float width = 8;
 
-					sapphire::rendering::draw_string( { x, y, 300, 20 }, notify->m_text, color, true, false, false );
-					y += size;
+					if ( time_delta < 0.3f )
+						width = ( time_delta / 0.3f ) * static_cast< float >( 8 );
+
+					if ( time_delta > 5.f - 0.2f )
+						width = -( ( time_delta / 0.3f ) * static_cast< float >( 8 ) );
+
+					color.a = alpha / 255.f;
+
+					sapphire::rendering::draw_string( { width, height, 300, 20 }, notify->m_text, color, true, false, false );
 				}
 			}
 		};

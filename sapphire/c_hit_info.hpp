@@ -1,7 +1,7 @@
 #pragma once
 #include "include.hpp"
 
-class rust::classes::c_hit_info 
+class rust::classes::c_hit_info
 {
 public:
 	DECLARE_MEMBER( math::vector_t, "HitInfo", PointStart );
@@ -9,7 +9,7 @@ public:
 	DECLARE_MEMBER( std::uintptr_t, "HitInfo", damageTypes );
 	DECLARE_MEMBER( rust::classes::c_base_player*, "HitInfo", HitEntity );
 
-	auto name( ) -> const wchar_t* 
+	auto name( ) -> const wchar_t*
 	{
 		auto ent = this->HitEntity( );
 
@@ -20,7 +20,7 @@ public:
 	}
 
 	auto damage( ) -> int { // this is wrong. always returns same value.
-		SAPPHIRE_METHOD( get_total_damage_fn, "Rust::DamageTypeList.Total()", 0, "", -1, float( * )( std::uintptr_t ) );
+		SAPPHIRE_METHOD( get_total_damage_fn, "Rust::DamageTypeList.Total()", -1, "", -1, float( * )( std::uintptr_t ) );
 		return static_cast< int >( get_total_damage_fn( this->damageTypes( ) ) );
 	}
 };

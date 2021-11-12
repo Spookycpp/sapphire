@@ -2,6 +2,8 @@
 #include <cstdint>
 #include <intrin.h>
 #undef min
+#undef max
+#define max( a, b ) ( ( ( a ) > ( b ) ) ? ( a ) : ( b ) )
 #define min( a, b ) ( ( ( a ) < ( b ) ) ? ( a ) : ( b ) )
 
 namespace utl // small crt replacements. maybe use minicrt? not sure if worth it for 3 functions.
