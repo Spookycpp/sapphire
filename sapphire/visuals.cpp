@@ -124,7 +124,7 @@ auto sapphire::features::c_visuals::render_player( rust::classes::c_base_player*
 	}
 
 	const auto npc = player->npc( );
-	const auto health = box_t{ { box.pos.x - 5, box.pos.y + ( box.size.y - box.size.y * ( player->_health( ) ) / npc ? player->_maxHealth( ) : 100 ) }, { 2, box.size.y * ( player->_health( ) ) / npc ? player->_maxHealth( ) : 100 } };
+	const auto health = box_t{ { box.pos.x - 5, box.pos.y + ( box.size.y - box.size.y * ( player->_health( ) ) / ( npc ? player->_maxHealth( ) : 100 ) ) }, { 2, box.size.y * ( player->_health( ) ) / ( npc ? player->_maxHealth( ) : 100 ) } };
 	const auto health_bg = box_t{ { box.pos.x - 5, box.pos.y }, { 2, box.size.y } };
 
 	sapphire::rendering::draw_filled_rect( { health_bg.pos.x, health_bg.pos.y - 1,  health_bg.size.x + 1, health_bg.size.y + 2 }, clr_t( 0, 0, 0, 240 ) );
