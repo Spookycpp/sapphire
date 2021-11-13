@@ -36,7 +36,7 @@ namespace sapphire
 				set_font_size_fn( label_style, size );
 			};
 
-			set_font( L"arial.ttf", 8 );
+			set_font( L"tahoma.ttf", 8 );
 
 			if ( !sapphire::gl_rendering::draw_material )
 			{
