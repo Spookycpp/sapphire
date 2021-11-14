@@ -118,7 +118,7 @@ auto sapphire::features::c_silent_aim::on_projectile_shoot_rpc( std::uint64_t in
 
 	for ( size_t idx{ 0 }; idx < projectile_list->list_size( ); idx++ )
 	{
-		const auto projectile = *reinterpret_cast< rust::classes::c_base_projectile** >( projectile_list + 0x20 + ( idx * 0x8 ) );
+		const auto projectile = *reinterpret_cast< rust::classes::c_projectile** >( projectile_list + 0x20 + ( idx * 0x8 ) );
 
 		if ( !projectile )
 			continue;
